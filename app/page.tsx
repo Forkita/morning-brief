@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 /* ============================================================
    RAISON D'ÊTRE — 30 entries, 4 tones
@@ -247,6 +247,15 @@ const THEMES = [
 ];
 
 /* ============================================================
+   TYPES
+   ============================================================ */
+type Theme = {
+  id: string; label: string; bg: string; card: string; border: string;
+  text: string; accent: string; sub: string; divider: string;
+  ornament: string; headFont: string; bodyFont: string;
+};
+
+/* ============================================================
    HELPERS
    ============================================================ */
 function seed() {
@@ -268,20 +277,20 @@ function fmtDate() {
 /* ============================================================
    SWIPEABLE ART GALLERY
    ============================================================ */
-function ArtGallery({ startIndex, theme }) {
+function ArtGallery({ startIndex, theme }: { startIndex: number; theme: Theme }) {
   const [current, setCurrent] = useState(startIndex);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [detailLoaded, setDetailLoaded] = useState(false);
   const [detailError, setDetailError] = useState(false);
-  const touchStartX = useRef(null);
+  const touchStartX = useRef<number | null>(null);
   const art = COLLECTION[current];
 
   const prev = () => { setImgLoaded(false); setImgError(false); setDetailLoaded(false); setDetailError(false); setCurrent((c) => (c - 1 + COLLECTION.length) % COLLECTION.length); };
   const next = () => { setImgLoaded(false); setImgError(false); setDetailLoaded(false); setDetailError(false); setCurrent((c) => (c + 1) % COLLECTION.length); };
 
-  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const onTouchEnd = (e) => {
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
@@ -356,7 +365,7 @@ export default function MorningBrief() {
 
   useEffect(() => { const t = setTimeout(() => setVisible(true), 100); return () => clearTimeout(t); }, []);
 
-  const c = {
+  const c: Record<string, React.CSSProperties> = {
     root: { minHeight: "100vh", background: theme.bg, fontFamily: theme.bodyFont, color: theme.text, WebkitFontSmoothing: "antialiased" },
     wrap: { maxWidth: "430px", margin: "0 auto", padding: "44px 20px 80px", opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(14px)", transition: "opacity 0.9s ease, transform 0.9s ease" },
     dateRow: { textAlign: "center", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", color: theme.sub, marginBottom: "5px" },
