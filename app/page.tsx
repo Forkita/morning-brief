@@ -253,7 +253,7 @@ function seed() {
   const t = new Date();
   return t.getFullYear() * 10000 + (t.getMonth() + 1) * 100 + t.getDate();
 }
-function pick(arr) { return arr[seed() % arr.length]; }
+function pick<T>(arr: T[]): T { return arr[seed() % arr.length]; }
 function getTheme() { return THEMES[seed() % THEMES.length]; }
 function isWeekend() { const d = new Date().getDay(); return d === 0 || d === 6; }
 function fmtDate() {
